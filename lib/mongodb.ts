@@ -55,4 +55,26 @@ async function dbConnect() {
   return cached!.conn
 }
 
+// catch mongo duplicate key error
+interface MongoDuplicateError extends Error {
+  code: number
+  codeName?: string
+  keyPattern: Record<string, number>
+
+  // eslint-disable-next-line
+  keyValue: Record<string, any>
+  index: number
+}
+export function isMongoDuplicateError(
+  error: unknown
+): error is MongoDuplicateError {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    // eslint-disable-next-line
+    (("code" in error && (error as any).code === 11000) ||
+      // eslint-disable-next-line
+      ("codeName" in error && (error as any).codeName === "DuplicateKey"))
+  )
+}
 export default dbConnect

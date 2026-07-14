@@ -1,4 +1,4 @@
-import { Book, BookCreateDto } from "@/types/book"
+import { BookCreateDto } from "@/types/book"
 import { GET, POST } from "./route"
 import { NextRequest } from "next/server"
 import { describe, it, expect } from "vitest"
@@ -61,5 +61,4 @@ describe("POST /api/books", () => {
       status: 400,
     })
   })
-  // it("should return 500 if there is an internal server error", async () => {})
 })

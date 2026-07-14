@@ -39,7 +39,7 @@ export async function createBook(bookData: BookCreateDto) {
 export async function deleteBookById(id: string) {
   await dbConnect()
   try {
-    const deleted = await BookModel.findByIdAndDelete(id)
+    const deleted = await BookModel.findByIdAndDelete(id).lean()
     return deleted
   } catch (err) {
     console.error("Error deleting book:", err)
@@ -50,7 +50,7 @@ export async function deleteBookById(id: string) {
 export async function updateBook(id: string, data: BookUpdateDto) {
   await dbConnect()
   try {
-    const updated = await BookModel.findByIdAndUpdate(id, data)
+    const updated = await BookModel.findByIdAndUpdate(id, data, { returnDocument: "after" }).lean()
     return updated
   } catch (err) {
     console.error("Error updating book:", err)
