@@ -14,24 +14,33 @@ export const bookSchema = z.object({
     .max(50, "Author must be less than 50 characters"),
   isbn: isbnSchema,
   category: z.enum(BOOK_GENRES),
-  publicationYear: Date,
+  publicationYear: z
+    .number()
+    .int()
+    .min(1000, "Publication year must be a valid year")
+    .max(new Date().getFullYear(), "Publication year cannot be in the future"),
+
   description: z
     .string()
     .nonempty("Description is required")
     .min(16, "Description must be at least 16 characters")
     .max(500, "Description must be less than 500 characters"),
   available: z.boolean().default(true),
-  createdAt: Date,
-  updatedAt: Date,
+  createdAt: z.date(),
+  updatedAt: z.date(),
 })
 
 // derive the dtos
 export const bookUpdateSchema = bookSchema
   .omit({
     id: true,
+    createdAt: true,
+    updatedAt: true,
   })
   .partial()
 
 export const bookCreateSchema = bookSchema.omit({
   id: true,
+  createdAt: true,
+  updatedAt: true,
 })
