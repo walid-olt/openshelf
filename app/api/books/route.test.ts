@@ -4,12 +4,15 @@ import { NextRequest } from "next/server"
 import { describe, it, expect } from "vitest"
 
 describe("GET /api/books", () => {
-  it("should return a an empty list of books", async () => {
-    const response = await GET()
+  it("should return an empty list of books", async () => {
+    const request = new NextRequest("http://localhost:3000/api/books")
+    const response = await GET(request)
 
     expect(response.status).toBe(200)
     const body = await response.json()
-    expect(body).toMatchObject({ data: [] })
+    expect(body).toMatchObject({
+      data: { books: [], total: 0, page: 1, limit: 10, totalPages: 0 },
+    })
   })
 })
 

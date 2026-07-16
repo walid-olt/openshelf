@@ -18,15 +18,15 @@ export default function CatalogPage() {
     error,
   } = useQuery({
     queryKey: ["books"],
-    queryFn: BooksApi.getAll,
+    queryFn: () => BooksApi.getAll(),
   })
 
   if (isFetching) return <p>loading...</p>
 
-  if (error || !response || !response.success) {
+  if (error || !response?.success) {
     return <p>something went wrong!</p>
   }
-  const books = response.data
+  const { books } = response.data
 
   return (
     <div className="flex min-h-svh flex-col">
