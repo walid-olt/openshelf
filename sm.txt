@@ -1,0 +1,2 @@
+Hello everyone, I hope you're doing well, yesterday I finished all the UI pages and component and today I will be working on integrating the API.
+

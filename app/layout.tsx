@@ -1,12 +1,16 @@
 import { Merriweather, DM_Sans } from "next/font/google"
 
 import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
+import { DeleteDialogProvider } from "@/components/delete-dialog-context"
 
 const fontSans = DM_Sans({ subsets: ["latin"], variable: "--font-sans" })
 
-const fontSerif = Merriweather({ subsets: ["latin"], variable: "--font-serif" })
+const fontSerif = Merriweather({
+  subsets: ["latin"],
+  variable: "--font-serif",
+  weight: ["300", "400", "700", "900"],
+})
 
 export default function RootLayout({
   children,
@@ -17,10 +21,14 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("antialiased", fontSans.variable, fontSerif.variable)}
+      className={cn(
+        "dark no-scrollbar font-sans antialiased",
+        fontSans.variable,
+        fontSerif.variable
+      )}
     >
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <DeleteDialogProvider>{children}</DeleteDialogProvider>
       </body>
     </html>
   )
