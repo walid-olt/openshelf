@@ -3,30 +3,45 @@
 import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeftIcon } from "@phosphor-icons/react"
+import { useQuery } from "@tanstack/react-query"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
-import { BookForm } from "@/components/book-form"
 import { Button } from "@/components/ui/button"
-import type { BookFormValues } from "@/components/book-form"
-import { PLACEHOLDER_BOOKS } from "@/lib/placeholder-books"
+import { EditBookForm } from "@/components/book-edit-form"
+import { BooksApi } from "@/lib/api-client"
 
 export default function EditBookPage() {
   const params = useParams<{ id: string }>()
   const router = useRouter()
 
-  const book = PLACEHOLDER_BOOKS.find((b) => b.id === params.id)
+  const { data: response, isPending, error } = useQuery({
+    queryKey: ["books", params.id],
+    queryFn: () => BooksApi.getById(params.id),
+  })
 
-  if (!book) {
+  if (isPending) {
     return (
       <div className="flex min-h-svh flex-col">
         <Header />
-        <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center px-4 py-16">
+        <main className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center px-4 py-16">
+          <p className="text-sm text-muted-foreground">Loading book...</p>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  if (error || !response?.success) {
+    return (
+      <div className="flex min-h-svh flex-col">
+        <Header />
+        <main className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center px-4 py-16">
           <p className="text-sm text-muted-foreground">Book not found.</p>
           <Button
             variant="ghost"
             size="sm"
-            render={<Link href="/">Back to catalog</Link>}
             nativeButton={false}
+            render={<Link href="/">Back to catalog</Link>}
             className="mt-2"
           />
         </main>
@@ -35,10 +50,7 @@ export default function EditBookPage() {
     )
   }
 
-  const handleSubmit = async (data: BookFormValues) => {
-    console.log("Update book:", params.id, data)
-    router.push(`/books/${params.id}`)
-  }
+  const book = response.data
 
   return (
     <div className="flex min-h-svh flex-col">
@@ -57,11 +69,7 @@ export default function EditBookPage() {
           Edit book
         </h1>
 
-        <BookForm
-          mode="edit"
-          initialData={book}
-          onSubmit={handleSubmit}
-        />
+        <EditBookForm book={book} />
       </main>
 
       <Footer />

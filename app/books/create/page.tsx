@@ -1,21 +1,12 @@
 "use client"
 
-import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeftIcon } from "@phosphor-icons/react"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
-import { BookForm } from "@/components/book-form"
-import type { BookFormValues } from "@/components/book-form"
+import { CreateBookForm } from "@/components/book-create-form"
 
 export default function CreateBookPage() {
-  const router = useRouter()
-
-  const handleSubmit = async (data: BookFormValues) => {
-    console.log("Create book:", data)
-    router.push("/")
-  }
-
   return (
     <div className="flex min-h-svh flex-col">
       <Header />
@@ -33,7 +24,7 @@ export default function CreateBookPage() {
           Add a new book
         </h1>
 
-        <BookForm mode="create" onSubmit={handleSubmit} />
+        <CreateBookForm />
       </main>
 
       <Footer />

@@ -1,9 +1,12 @@
 "use client"
 
-import { useForm, Controller } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeftIcon } from "@phosphor-icons/react"
+import { z } from "zod"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
@@ -17,42 +20,56 @@ import {
 } from "@/components/ui/select"
 import { BOOK_GENRES } from "@/lib/constants/BOOK_GENRES"
 import { bookCreateSchema } from "@/schemas/book.schema"
-import type { Book, BookCreateDto } from "@/types/book"
+import { BooksApi } from "@/lib/api-client"
+import type { BookCreateDto } from "@/types/book"
 
-interface BookFormProps {
-  initialData?: Book
-  mode: "create" | "edit"
-  onSubmit: (data: BookCreateDto) => void | Promise<void>
+const bookFormSchema = bookCreateSchema.omit({ slug: true })
+
+function slugify(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
 }
 
-function BookForm({ initialData, mode, onSubmit }: BookFormProps) {
+function CreateBookForm() {
+  const router = useRouter()
+  const queryClient = useQueryClient()
+
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: BooksApi.create,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["books"] })
+      router.push("/")
+    },
+  })
+
   const {
     register,
     handleSubmit,
-    control,
-    formState: { errors, isSubmitting },
+    watch,
+    setValue,
+    formState: { errors },
   } = useForm({
-    resolver: zodResolver(bookCreateSchema),
-    defaultValues: initialData
-      ? {
-          title: initialData.title,
-          author: initialData.author,
-          isbn: initialData.isbn,
-          category: initialData.category,
-          publicationYear: initialData.publicationYear,
-          description: initialData.description,
-          available: initialData.available,
-        }
-      : {
-          title: "",
-          author: "",
-          isbn: "",
-          category: undefined,
-          publicationYear: new Date().getFullYear(),
-          description: "",
-          available: true,
-        },
+    resolver: standardSchemaResolver(bookFormSchema),
+    mode: "onChange",
+    defaultValues: {
+      title: "",
+      author: "",
+      isbn: "",
+      category: BOOK_GENRES[0] as BookCreateDto["category"],
+      publicationYear: new Date().getFullYear(),
+      description: "",
+      available: true,
+    },
   })
+
+  const category = watch("category")
+  const available = watch("available")
+
+  const onSubmit = async (data: z.infer<typeof bookFormSchema>) => {
+    await mutateAsync({ ...data, slug: slugify(data.title) })
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -73,44 +90,36 @@ function BookForm({ initialData, mode, onSubmit }: BookFormProps) {
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="isbn">
-          ISBN
-          {mode === "edit" && (
-            <span className="text-sm text-muted">{"(can't be edited)"}</span>
-          )}
-        </Label>
+        <Label htmlFor="isbn">ISBN</Label>
         <Input
-          disabled={mode === "edit"}
-          className={mode === "edit" ? "cursor-not-allowed grayscale-50" : ""}
-
           id="isbn"
           placeholder="978-3-16-148410-0"
+          {...register("isbn")}
         />
+        {errors.isbn && (
+          <p className="text-xs text-destructive">{errors.isbn.message}</p>
+        )}
       </div>
 
       <div className="space-y-1.5">
         <Label>Category</Label>
-        <Controller
-          control={control}
-          name="category"
-          render={({ field }) => (
-            <Select
-              value={field.value}
-              onValueChange={(v) => v && field.onChange(v)}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select a genre" />
-              </SelectTrigger>
-              <SelectContent>
-                {BOOK_GENRES.map((genre) => (
-                  <SelectItem key={genre} value={genre}>
-                    {genre}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-        />
+        <Select
+          value={category}
+          onValueChange={(v) =>
+            setValue("category", v as BookCreateDto["category"])
+          }
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select a genre" />
+          </SelectTrigger>
+          <SelectContent>
+            {BOOK_GENRES.map((genre) => (
+              <SelectItem key={genre} value={genre}>
+                {genre}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         {errors.category && (
           <p className="text-xs text-destructive">{errors.category.message}</p>
         )}
@@ -141,18 +150,12 @@ function BookForm({ initialData, mode, onSubmit }: BookFormProps) {
       </div>
 
       <div className="flex items-center gap-2">
-        <Controller
-          control={control}
-          name="available"
-          render={({ field }) => (
-            <input
-              type="checkbox"
-              id="available"
-              checked={field.value}
-              onChange={field.onChange}
-              className="size-5 rounded border-input accent-accent"
-            />
-          )}
+        <input
+          type="checkbox"
+          id="available"
+          checked={available}
+          onChange={(e) => setValue("available", e.target.checked)}
+          className="size-5 rounded border-input accent-accent"
         />
         <Label htmlFor="available" className="font-normal">
           Available for borrow
@@ -160,20 +163,14 @@ function BookForm({ initialData, mode, onSubmit }: BookFormProps) {
       </div>
 
       <div className="flex items-center gap-3 pt-2">
-        <Button type="submit" disabled={isSubmitting}>
-          {mode === "create" ? "Add book" : "Save changes"}
+        <Button type="submit" disabled={isPending}>
+          Add book
         </Button>
         <Button
           variant="ghost"
           nativeButton={false}
           render={
-            <Link
-              href={
-                mode === "edit" && initialData
-                  ? `/books/${initialData.id}`
-                  : "/"
-              }
-            >
+            <Link href="/">
               <ArrowLeftIcon />
               Cancel
             </Link>
@@ -184,4 +181,4 @@ function BookForm({ initialData, mode, onSubmit }: BookFormProps) {
   )
 }
 
-export { BookForm }
+export { CreateBookForm }

@@ -6,7 +6,7 @@ import BookModel from "@/models/book.model"
 export async function getAllBooks(filter?: QueryFilter<Book>) {
   await dbConnect()
   try {
-    const books = await BookModel.find(filter || {}).lean()
+    const books = await BookModel.find(filter || {})
     return books
   } catch (err) {
     console.error("Error fetching books:", err)
@@ -17,7 +17,7 @@ export async function getAllBooks(filter?: QueryFilter<Book>) {
 export async function getBookById(id: string) {
   await dbConnect()
   try {
-    const book = await BookModel.findById(id).lean()
+    const book = await BookModel.findById(id)
     return book
   } catch (err) {
     console.error(`Error fetching book with id ${id}:`, err)
@@ -39,7 +39,7 @@ export async function createBook(bookData: BookCreateDto) {
 export async function deleteBookById(id: string) {
   await dbConnect()
   try {
-    const deleted = await BookModel.findByIdAndDelete(id).lean()
+    const deleted = await BookModel.findByIdAndDelete(id)
     return deleted
   } catch (err) {
     console.error("Error deleting book:", err)
@@ -50,7 +50,7 @@ export async function deleteBookById(id: string) {
 export async function updateBook(id: string, data: BookUpdateDto) {
   await dbConnect()
   try {
-    const updated = await BookModel.findByIdAndUpdate(id, data, { returnDocument: "after" }).lean()
+    const updated = await BookModel.findByIdAndUpdate(id, data, { returnDocument: "after" })
     return updated
   } catch (err) {
     console.error("Error updating book:", err)

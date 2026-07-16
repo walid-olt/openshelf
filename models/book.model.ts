@@ -17,7 +17,15 @@ const bookModelSchema = new Schema<Book>(
     },
     available: { type: Boolean, default: true },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: {
+      virtuals: true,
+    },
+    toObject: {
+      virtuals: true,
+    },
+  }
 )
 
 const BookModel =

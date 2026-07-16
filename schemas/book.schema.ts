@@ -25,7 +25,7 @@ export const bookSchema = z.object({
     .nonempty("Description is required")
     .min(16, "Description must be at least 16 characters")
     .max(500, "Description must be less than 500 characters"),
-  available: z.boolean().default(true),
+  available: z.boolean().nonoptional().default(true),
   createdAt: z.date(),
   updatedAt: z.date(),
 })

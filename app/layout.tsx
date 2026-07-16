@@ -3,6 +3,8 @@ import { Merriweather, DM_Sans } from "next/font/google"
 import "./globals.css"
 import { cn } from "@/lib/utils"
 import { DeleteDialogProvider } from "@/components/delete-dialog-context"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { queryClient } from "@/lib/query-client"
 
 const fontSans = DM_Sans({ subsets: ["latin"], variable: "--font-sans" })
 
@@ -28,7 +30,9 @@ export default function RootLayout({
       )}
     >
       <body>
-        <DeleteDialogProvider>{children}</DeleteDialogProvider>
+        <QueryClientProvider client={queryClient}>
+          <DeleteDialogProvider>{children}</DeleteDialogProvider>
+        </QueryClientProvider>
       </body>
     </html>
   )
