@@ -11,7 +11,7 @@ describe("GET /api/books", () => {
     expect(response.status).toBe(200)
     const body = await response.json()
     expect(body).toMatchObject({
-      data: { books: [], total: 0, page: 1, limit: 10, totalPages: 0 },
+      data: [],
     })
   })
 })
@@ -24,7 +24,6 @@ describe("POST /api/books", () => {
       description: "test description",
       publicationYear: 2000,
       isbn: "1234567890",
-      slug: "test-slug",
       category: "Action",
       available: true,
     }

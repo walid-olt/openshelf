@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { BookOpenTextIcon } from "@phosphor-icons/react"
+import { BookOpenTextIcon } from "@phosphor-icons/react/dist/ssr"
 import { Button } from "@/components/ui/button"
 
 function Header() {

@@ -2,10 +2,6 @@
 
 import Link from "next/link"
 import { BookOpenTextIcon } from "@phosphor-icons/react"
-import Header from "@/components/header"
-import Footer from "@/components/footer"
-import { SearchBar } from "@/components/search-bar"
-import { Filter } from "@/components/filter"
 import { BookCard } from "@/components/book-card"
 import { Button } from "@/components/ui/button"
 import { useQuery } from "@tanstack/react-query"
@@ -26,12 +22,12 @@ export default function CatalogPage() {
   if (error || !response?.success) {
     return <p>something went wrong!</p>
   }
-  const { books } = response.data
+  console.log(response)
+
+  const books = response.data
 
   return (
     <div className="flex min-h-svh flex-col">
-      <Header />
-
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-8 px-4 py-8">
         <section className="space-y-1">
           <h1 className="font-serif text-2xl font-bold tracking-tight text-foreground">
@@ -69,13 +65,11 @@ export default function CatalogPage() {
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {books.map((book) => (
-              <BookCard key={book.isbn} book={book} onDelete={() => {}} />
+              <BookCard key={book.isbn} book={book} />
             ))}
           </div>
         )}
       </main>
-
-      <Footer />
     </div>
   )
 }

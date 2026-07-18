@@ -13,7 +13,6 @@ describe("GET /api/books/[id]", () => {
       available: true,
       category: "Action",
       title: "Test Book",
-      slug: "test-book",
       publicationYear: 2024,
     })
     if (!created) throw new Error("Failed to create book for test")
@@ -37,7 +36,6 @@ describe("GET /api/books/[id]", () => {
         author: "Test Author",
         isbn: "1234567890",
         category: "Action",
-        slug: "test-book",
         description: "Test Description",
         publicationYear: 2024,
         available: true,
@@ -75,7 +73,6 @@ describe("PUT /api/books/[id]", () => {
       available: true,
       category: "Action",
       title: "Test Book",
-      slug: "test-book",
       publicationYear: 2024,
     })
     if (!created) throw new Error("Failed to create book for test")
@@ -100,7 +97,6 @@ describe("PUT /api/books/[id]", () => {
         author: "Updated Author",
         isbn: "1234567890",
         category: "Action",
-        slug: "test-book",
         description: "Test Description for update",
         publicationYear: 2024,
         available: true,
@@ -138,7 +134,6 @@ describe("PUT /api/books/[id]", () => {
       available: true,
       category: "Action",
       title: "Test Book",
-      slug: "test-book",
       publicationYear: 2024,
     })
     if (!created) throw new Error("Failed to create book for test")
@@ -175,7 +170,6 @@ describe("DELETE /api/books/[id]", () => {
       available: true,
       category: "Action",
       title: "Test Book",
-      slug: "test-book",
       publicationYear: 2024,
     })
     if (!created) throw new Error("Failed to create book for test")

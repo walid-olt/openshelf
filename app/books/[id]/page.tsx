@@ -11,11 +11,16 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { BooksApi } from "@/lib/api-client"
+import { BookActions } from "@/components/book-actions"
 
 export default function BookDetailPage() {
   const params = useParams<{ id: string }>()
 
-  const { data: response, isPending, error } = useQuery({
+  const {
+    data: response,
+    isPending,
+    error,
+  } = useQuery({
     queryKey: ["books", params.id],
     queryFn: () => BooksApi.getById(params.id),
   })
@@ -35,7 +40,6 @@ export default function BookDetailPage() {
   if (error || !response?.success) {
     return (
       <div className="flex min-h-svh flex-col">
-        <Header />
         <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center px-4 py-16">
           <p className="text-sm text-muted-foreground">Book not found.</p>
           <Button
@@ -46,7 +50,6 @@ export default function BookDetailPage() {
             className="mt-2"
           />
         </main>
-        <Footer />
       </div>
     )
   }
@@ -55,8 +58,6 @@ export default function BookDetailPage() {
 
   return (
     <div className="flex min-h-svh flex-col">
-      <Header />
-
       <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-8">
         <Link
           href="/"
@@ -102,11 +103,11 @@ export default function BookDetailPage() {
             </p>
 
             <Separator />
+
+            <BookActions book={book} />
           </CardContent>
         </Card>
       </main>
-
-      <Footer />
     </div>
   )
 }

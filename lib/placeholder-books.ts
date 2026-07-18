@@ -3,7 +3,6 @@ import type { Book } from "@/types/book"
 export const PLACEHOLDER_BOOKS: Book[] = [
   {
     id: "6650a1b2c3d4e5f6a7b8c9d0",
-    slug: "the-great-gatsby",
     title: "The Great Gatsby",
     author: "F. Scott Fitzgerald",
     isbn: "9780743273565",
@@ -17,7 +16,6 @@ export const PLACEHOLDER_BOOKS: Book[] = [
   },
   {
     id: "6650a1b2c3d4e5f6a7b8c9d1",
-    slug: "dune",
     title: "Dune",
     author: "Frank Herbert",
     isbn: "9780441013593",
@@ -31,7 +29,6 @@ export const PLACEHOLDER_BOOKS: Book[] = [
   },
   {
     id: "6650a1b2c3d4e5f6a7b8c9d2",
-    slug: "pride-and-prejudice",
     title: "Pride and Prejudice",
     author: "Jane Austen",
     isbn: "9780141439518",
@@ -45,7 +42,6 @@ export const PLACEHOLDER_BOOKS: Book[] = [
   },
   {
     id: "6650a1b2c3d4e5f6a7b8c9d3",
-    slug: "the-hobbit",
     title: "The Hobbit",
     author: "J.R.R. Tolkien",
     isbn: "9780547928227",
@@ -59,7 +55,6 @@ export const PLACEHOLDER_BOOKS: Book[] = [
   },
   {
     id: "6650a1b2c3d4e5f6a7b8c9d4",
-    slug: "1984",
     title: "1984",
     author: "George Orwell",
     isbn: "9780451524935",
@@ -73,7 +68,6 @@ export const PLACEHOLDER_BOOKS: Book[] = [
   },
   {
     id: "6650a1b2c3d4e5f6a7b8c9d5",
-    slug: "to-kill-a-mockingbird",
     title: "To Kill a Mockingbird",
     author: "Harper Lee",
     isbn: "9780061120084",

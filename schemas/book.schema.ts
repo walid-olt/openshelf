@@ -3,7 +3,6 @@ import { isbnSchema } from "./isbn.schema"
 import { BOOK_GENRES } from "@/lib/constants/BOOK_GENRES"
 export const bookSchema = z.object({
   id: z.string().length(24, "Invalid ID format"),
-  slug: z.string(),
   title: z
     .string()
     .nonempty("Title is required")

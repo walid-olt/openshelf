@@ -6,7 +6,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeftIcon } from "@phosphor-icons/react"
-import { z } from "zod"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
@@ -23,20 +22,11 @@ import { bookCreateSchema } from "@/schemas/book.schema"
 import { BooksApi } from "@/lib/api-client"
 import type { BookCreateDto } from "@/types/book"
 
-const bookFormSchema = bookCreateSchema.omit({ slug: true })
-
-function slugify(title: string): string {
-  return title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "")
-}
-
 function CreateBookForm() {
   const router = useRouter()
   const queryClient = useQueryClient()
 
-  const { mutateAsync, isPending } = useMutation({
+  const { mutateAsync, isPending, error } = useMutation({
     mutationFn: BooksApi.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["books"] })
@@ -51,7 +41,7 @@ function CreateBookForm() {
     setValue,
     formState: { errors },
   } = useForm({
-    resolver: standardSchemaResolver(bookFormSchema),
+    resolver: standardSchemaResolver(bookCreateSchema),
     mode: "onChange",
     defaultValues: {
       title: "",
@@ -67,8 +57,8 @@ function CreateBookForm() {
   const category = watch("category")
   const available = watch("available")
 
-  const onSubmit = async (data: z.infer<typeof bookFormSchema>) => {
-    await mutateAsync({ ...data, slug: slugify(data.title) })
+  const onSubmit = async (data: BookCreateDto) => {
+    await mutateAsync(data)
   }
 
   return (
@@ -161,6 +151,10 @@ function CreateBookForm() {
           Available for borrow
         </Label>
       </div>
+
+      {error && (
+        <p className="text-sm text-destructive">{error.message}</p>
+      )}
 
       <div className="flex items-center gap-3 pt-2">
         <Button type="submit" disabled={isPending}>

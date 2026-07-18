@@ -3,7 +3,6 @@ import { Book } from "../types/book"
 
 const bookModelSchema = new Schema<Book>(
   {
-    slug: { type: String, required: true, unique: true },
     title: { type: String, required: true, maxlength: 100 },
     author: { type: String, required: true, maxlength: 50 },
     isbn: { type: String, required: true, unique: true },

@@ -1,6 +1,6 @@
 import ky, { isHTTPError } from "ky"
 import type { Book, BookCreateDto, BookUpdateDto } from "@/types/book"
-import type { ApiResponse, BookQueryParams, PaginatedData } from "@/types/response"
+import type { ApiResponse, BookQueryParams } from "@/types/response"
 
 const client = ky.create({
   prefix: "/api",
@@ -24,18 +24,16 @@ const client = ky.create({
 export class BooksApi {
   static async getAll(
     params?: BookQueryParams
-  ): Promise<ApiResponse<PaginatedData<Book>>> {
+  ): Promise<ApiResponse<Book[]>> {
     const searchParams = new URLSearchParams()
     if (params?.search) searchParams.set("search", params.search)
     if (params?.category) searchParams.set("category", params.category)
     if (params?.available !== undefined)
       searchParams.set("available", String(params.available))
-    if (params?.page) searchParams.set("page", String(params.page))
-    if (params?.limit) searchParams.set("limit", String(params.limit))
 
     return client
       .get("books", { searchParams })
-      .json<ApiResponse<PaginatedData<Book>>>()
+      .json<ApiResponse<Book[]>>()
   }
 
   static async getById(id: string): Promise<ApiResponse<Book>> {

@@ -2,7 +2,6 @@
 
 import { useForm } from "react-hook-form"
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeftIcon } from "@phosphor-icons/react"
@@ -19,7 +18,7 @@ import {
 } from "@/components/ui/select"
 import { BOOK_GENRES } from "@/lib/constants/BOOK_GENRES"
 import { bookCreateSchema } from "@/schemas/book.schema"
-import { BooksApi } from "@/lib/api-client"
+import useUpdateBookMutation from "@/hooks/useUpdateBookMutation"
 import type { Book, BookCreateDto } from "@/types/book"
 
 interface EditBookFormProps {
@@ -28,18 +27,7 @@ interface EditBookFormProps {
 
 function EditBookForm({ book }: EditBookFormProps) {
   const router = useRouter()
-  const queryClient = useQueryClient()
-
-  const { mutateAsync, isPending } = useMutation({
-    mutationFn: (data: BookCreateDto) => {
-      const { slug: _, ...rest } = data
-      return BooksApi.update(book.id, rest)
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["books"] })
-      router.push(`/books/${book.id}`)
-    },
-  })
+  const { mutateAsync, isPending, error } = useUpdateBookMutation()
 
   const {
     register,
@@ -64,7 +52,8 @@ function EditBookForm({ book }: EditBookFormProps) {
   const available = watch("available")
 
   const onSubmit = async (data: BookCreateDto) => {
-    await mutateAsync(data)
+    await mutateAsync({ id: book.id, data })
+    router.push(`/books/${book.id}`)
   }
 
   return (
@@ -156,6 +145,10 @@ function EditBookForm({ book }: EditBookFormProps) {
           Available for borrow
         </Label>
       </div>
+
+      {error && (
+        <p className="text-sm text-destructive">{error.message}</p>
+      )}
 
       <div className="flex items-center gap-3 pt-2">
         <Button type="submit" disabled={isPending}>

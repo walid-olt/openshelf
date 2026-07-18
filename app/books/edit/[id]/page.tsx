@@ -1,20 +1,21 @@
 "use client"
 
-import { useParams, useRouter } from "next/navigation"
+import { useParams } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeftIcon } from "@phosphor-icons/react"
 import { useQuery } from "@tanstack/react-query"
-import Header from "@/components/header"
-import Footer from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { EditBookForm } from "@/components/book-edit-form"
 import { BooksApi } from "@/lib/api-client"
 
 export default function EditBookPage() {
   const params = useParams<{ id: string }>()
-  const router = useRouter()
 
-  const { data: response, isPending, error } = useQuery({
+  const {
+    data: response,
+    isPending,
+    error,
+  } = useQuery({
     queryKey: ["books", params.id],
     queryFn: () => BooksApi.getById(params.id),
   })
@@ -22,11 +23,9 @@ export default function EditBookPage() {
   if (isPending) {
     return (
       <div className="flex min-h-svh flex-col">
-        <Header />
         <main className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center px-4 py-16">
           <p className="text-sm text-muted-foreground">Loading book...</p>
         </main>
-        <Footer />
       </div>
     )
   }
@@ -34,7 +33,6 @@ export default function EditBookPage() {
   if (error || !response?.success) {
     return (
       <div className="flex min-h-svh flex-col">
-        <Header />
         <main className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center px-4 py-16">
           <p className="text-sm text-muted-foreground">Book not found.</p>
           <Button
@@ -45,7 +43,6 @@ export default function EditBookPage() {
             className="mt-2"
           />
         </main>
-        <Footer />
       </div>
     )
   }
@@ -54,8 +51,6 @@ export default function EditBookPage() {
 
   return (
     <div className="flex min-h-svh flex-col">
-      <Header />
-
       <main className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-6 px-4 py-8">
         <Link
           href={`/books/${book.id}`}
@@ -71,8 +66,6 @@ export default function EditBookPage() {
 
         <EditBookForm book={book} />
       </main>
-
-      <Footer />
     </div>
   )
 }

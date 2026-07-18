@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils"
 import { DeleteDialogProvider } from "@/components/delete-dialog-context"
 import { QueryClientProvider } from "@tanstack/react-query"
 import { queryClient } from "@/lib/query-client"
+import Header from "@/components/header"
+import Footer from "@/components/footer"
 
 const fontSans = DM_Sans({ subsets: ["latin"], variable: "--font-sans" })
 
@@ -30,9 +32,11 @@ export default function RootLayout({
       )}
     >
       <body>
+        <Header />
         <QueryClientProvider client={queryClient}>
           <DeleteDialogProvider>{children}</DeleteDialogProvider>
         </QueryClientProvider>
+        <Footer />
       </body>
     </html>
   )

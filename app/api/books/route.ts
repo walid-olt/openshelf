@@ -12,17 +12,8 @@ export async function GET(request: NextRequest) {
   const availableParam = searchParams.get("available")
   const available =
     availableParam !== null ? availableParam === "true" : undefined
-  const page = searchParams.get("page")
-    ? Number(searchParams.get("page"))
-    : undefined
-  const limit = searchParams.get("limit")
-    ? Number(searchParams.get("limit"))
-    : undefined
 
-  const result = await getBooks(
-    { search, category, available },
-    { page, limit }
-  )
+  const result = await getBooks({ search, category, available })
 
   return createResponse({ data: result, success: true, status: 200 })
 }

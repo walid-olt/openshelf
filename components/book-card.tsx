@@ -1,29 +1,23 @@
 "use client"
 
 import Link from "next/link"
-import {
-  PencilSimpleIcon,
-  TrashIcon,
-  ArrowSquareOutIcon,
-} from "@phosphor-icons/react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { useDeleteDialog } from "@/components/delete-dialog-context"
+import { BookActions } from "@/components/book-actions"
 import type { Book } from "@/types/book"
 
 interface BookCardProps {
   book: Book
-  onDelete?: (id: string) => void
 }
 
-function BookCard({ book, onDelete }: BookCardProps) {
-  const { openDeleteDialog } = useDeleteDialog()
-
+function BookCard({ book }: BookCardProps) {
   return (
     <article className="group/card relative">
-      <Link href={`/books/${book.id}`}>
-        <Card className="relative overflow-visible border-l-4 border-l-accent pl-5 transition-all duration-200 ease-out">
+      <Card className="relative overflow-visible border-l-4 border-l-accent pl-5 transition-all duration-200 ease-out">
+        <Link
+          href={`/books/${book.id}`}
+          className="block"
+        >
           <div className="flex flex-col gap-2">
             <span className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">
               {book.category}
@@ -44,8 +38,9 @@ function BookCard({ book, onDelete }: BookCardProps) {
               </Badge>
             </div>
           </div>
-        </Card>
-      </Link>
+        </Link>
+        <BookActions book={book} />
+      </Card>
     </article>
   )
 }
