@@ -15,7 +15,7 @@ function Header() {
         <Button
           render={<Link href="/books/create">Add book</Link>}
           nativeButton={false}
-          size="lg"
+          size="default"
         />
       </nav>
     </header>
