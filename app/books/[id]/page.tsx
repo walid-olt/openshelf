@@ -4,14 +4,13 @@ import { useParams } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeftIcon } from "@phosphor-icons/react"
 import { useQuery } from "@tanstack/react-query"
-import Header from "@/components/header"
-import Footer from "@/components/footer"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { BooksApi } from "@/lib/api-client"
 import { BookActions } from "@/components/book-actions"
+import { PageLoader } from "@/components/page-loader"
+import { ErrorState } from "@/components/error-state"
 
 export default function BookDetailPage() {
   const params = useParams<{ id: string }>()
@@ -25,32 +24,14 @@ export default function BookDetailPage() {
     queryFn: () => BooksApi.getById(params.id),
   })
 
-  if (isPending) {
-    return (
-      <div className="flex min-h-svh flex-col">
-        <Header />
-        <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center px-4 py-16">
-          <p className="text-sm text-muted-foreground">Loading book...</p>
-        </main>
-        <Footer />
-      </div>
-    )
-  }
+  if (isPending) return <PageLoader message="Loading book..." />
 
   if (error || !response?.success) {
     return (
-      <div className="flex min-h-svh flex-col">
-        <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center px-4 py-16">
-          <p className="text-sm text-muted-foreground">Book not found.</p>
-          <Button
-            variant="ghost"
-            size="sm"
-            nativeButton={false}
-            render={<Link href="/">Back to catalog</Link>}
-            className="mt-2"
-          />
-        </main>
-      </div>
+      <ErrorState
+        title="Book not found"
+        message="The book you're looking for doesn't exist or has been removed."
+      />
     )
   }
 
